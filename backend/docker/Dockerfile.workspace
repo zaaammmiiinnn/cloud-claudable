@@ -19,7 +19,9 @@ RUN npm install -g pnpm tsx typescript \
     create-next-app create-vite
 
 # Pre-create workspace with correct permissions
-RUN mkdir -p /workspace && chmod 777 /workspace
+RUN mkdir -p /workspace && chown -R node:node /workspace && chmod 777 /workspace
+
+USER node
 
 # Default: keep container alive (exec_run will send commands)
 CMD ["tail", "-f", "/dev/null"]
