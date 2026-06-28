@@ -1,0 +1,25 @@
+# cloud-claudable-workspace — runs inside each user project container
+FROM node:20-slim
+
+WORKDIR /workspace
+
+# Install system deps
+RUN apt-get update && apt-get install -y \
+    git curl python3 python3-pip \
+    build-essential \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Claude Code globally (non-interactive)
+RUN npm install -g @anthropic-ai/claude-code --yes 2>/dev/null || \
+    npm install -g @anthropic-ai/claude-code
+
+# Install common build tools and scaffolders
+RUN npm install -g pnpm tsx typescript \
+    create-next-app create-vite
+
+# Pre-create workspace with correct permissions
+RUN mkdir -p /workspace && chmod 777 /workspace
+
+# Default: keep container alive (exec_run will send commands)
+CMD ["tail", "-f", "/dev/null"]
